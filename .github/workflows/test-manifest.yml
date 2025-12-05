@@ -26,6 +26,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y git-core
+          pip install lxml
           wget https://storage.googleapis.com/git-repo-downloads/repo
           sudo mv repo /usr/bin/repo
           sudo chmod a+x /usr/bin/repo
