@@ -1,0 +1,61 @@
+name: Test Manifest
+
+on:
+  workflow_dispatch:
+    inputs:
+      rom_manifest:
+        description: 'ROM manifest URL(e.g., https://github.com/LineageOS/android.git)'
+        required: true
+      rom_branch:
+        description: 'ROM manifest branch (e.g., lineage-21.0)'
+        required: true
+      manifest_content:
+        description: 'local_manifest.xml content'
+        required: true
+        type: string
+
+jobs:
+  test-manifest:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install repo tool
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git-core
+          wget https://storage.googleapis.com/git-repo-downloads/repo
+          sudo mv repo /usr/bin/repo
+          sudo chmod a+x /usr/bin/repo
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Initialize repo
+        run: |
+          mkdir -p rom-source
+          cd rom-source
+          repo init --depth=1 --no-repo-verify -u ${{ inputs.rom_manifest }} -b ${{ inputs.rom_branch }}
+
+      - name: Create local manifest
+        run: |
+          mkdir -p rom-source/.repo/local_manifests
+          cat > rom-source/.repo/local_manifests/local_manifest.xml << 'EOF'
+          ${{ inputs.manifest_content }}
+          EOF
+          cat rom-source/.repo/local_manifests/local_manifest.xml
+
+      - name: Validate manifest syntax
+        id: test
+        continue-on-error: false
+        run: |
+          cd rom-source
+          echo "Validating manifest syntax..."
+          
+          # Let repo manifest show any errors - it will fail if there are issues
+          repo manifest -o test.xml
+          echo "✅ SUCCESS: Manifest is valid!"
