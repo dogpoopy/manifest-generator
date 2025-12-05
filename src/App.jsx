@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { Plus, Trash2, Copy, Download, Play } from 'lucide-react';
+import { Plus, Trash2, Copy, Download, Play, ExternalLink } from 'lucide-react';
 
 export default function ManifestGenerator() {
   const [remotes, setRemotes] = useState([]);
@@ -61,30 +61,30 @@ export default function ManifestGenerator() {
     let xml = '<?xml version="1.0" encoding="UTF-8"?>\n<manifest>\n\n';
     
     if (remotes.length > 0) {
-      xml += ' <!-- Remotes -->\n';
+      xml += '  <!-- Remotes -->\n';
       remotes.forEach(remote => {
         if (remote.name && remote.fetch) {
-          xml += `    <remote name="${remote.name}"\n`;
-          xml += `            fetch="${remote.fetch}" />\n\n`;
+          xml += `  <remote name="${remote.name}"\n`;
+          xml += `          fetch="${remote.fetch}" />\n\n`;
         }
       });
     }
 
     if (projects.length > 0) {
-      xml += ' <!-- Projects -->\n';
+      xml += '  <!-- Projects -->\n';
       projects.forEach(project => {
         if (project.path && project.name) {
-          const line = ` <project path="${project.path}" name="${project.name}"${project.remote ? ` remote="${project.remote}"` : ''}${project.branch ? ` revision="${project.branch}"` : ''} />`;
-          xml += project.commented ? ` <!--${line} -->\n` : `${line}\n`;
+          const line = `  <project path="${project.path}" name="${project.name}"${project.remote ? ` remote="${project.remote}"` : ''}${project.branch ? ` revision="${project.branch}"` : ''} />`;
+          xml += project.commented ? `  <!--${line} -->\n` : `${line}\n`;
         }
       });
     }
 
     if (removeProjects.length > 0) {
-      xml += '\n <!-- Remove Projects -->\n';
+      xml += '\n  <!-- Remove Projects -->\n';
       removeProjects.forEach(rp => {
         if (rp.name) {
-          xml += ` <remove-project name="${rp.name}" />\n`;
+          xml += `  <remove-project name="${rp.name}" />\n`;
         }
       });
     }
@@ -143,8 +143,10 @@ export default function ManifestGenerator() {
       if (response.ok) {
         setTestResult({
           success: true,
-          message: 'Test started successfully! Check the results on GitHub Actions.',
-          actionsUrl: data.actionsUrl
+          message: 'Test started successfully! The workflow will verify repository accessibility and manifest validity.',
+          runUrl: data.runUrl,
+          workflowUrl: data.workflowUrl,
+          runId: data.runId
         });
       } else {
         setTestResult({
@@ -167,7 +169,7 @@ export default function ManifestGenerator() {
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-white">Manifest Generator</h1>
-          <p className="text-gray-400 mt-2">Create local_manifest.xml for ROM building</p>
+          <p className="text-gray-400 mt-2">Create and test local_manifest.xml for ROM building</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -177,7 +179,7 @@ export default function ManifestGenerator() {
             <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
               <div className="flex justify-between items-center mb-3">
                 <h2 className="text-xl font-semibold text-white">Remotes</h2>
-                <button onClick={addRemote} className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm">
+                <button onClick={addRemote} className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm transition">
                   <Plus size={16} /> Add Remote
                 </button>
               </div>
@@ -187,7 +189,7 @@ export default function ManifestGenerator() {
                   <div key={idx} className="bg-gray-900 p-3 rounded space-y-2">
                     <div className="flex justify-between items-center">
                       <span className="text-blue-300 text-sm">Remote {idx + 1}</span>
-                      <button onClick={() => deleteRemote(idx)} className="text-red-400 hover:text-red-300">
+                      <button onClick={() => deleteRemote(idx)} className="text-red-400 hover:text-red-300 transition">
                         <Trash2 size={14} />
                       </button>
                     </div>
@@ -196,14 +198,14 @@ export default function ManifestGenerator() {
                       placeholder="Name (e.g., github)"
                       value={remote.name}
                       onChange={(e) => updateRemote(idx, 'name', e.target.value)}
-                      className="w-full bg-gray-800 text-white px-2 py-1 rounded text-sm border border-gray-600"
+                      className="w-full bg-gray-800 text-white px-2 py-1 rounded text-sm border border-gray-600 focus:border-blue-500 focus:outline-none"
                     />
                     <input
                       type="text"
                       placeholder="Fetch URL (e.g., https://github.com/)"
                       value={remote.fetch}
                       onChange={(e) => updateRemote(idx, 'fetch', e.target.value)}
-                      className="w-full bg-gray-800 text-white px-2 py-1 rounded text-sm border border-gray-600"
+                      className="w-full bg-gray-800 text-white px-2 py-1 rounded text-sm border border-gray-600 focus:border-blue-500 focus:outline-none"
                     />
                   </div>
                 ))}
@@ -214,7 +216,7 @@ export default function ManifestGenerator() {
             <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
               <div className="flex justify-between items-center mb-3">
                 <h2 className="text-xl font-semibold text-white">Projects</h2>
-                <button onClick={addProject} className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm">
+                <button onClick={addProject} className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm transition">
                   <Plus size={16} /> Add Project
                 </button>
               </div>
@@ -224,7 +226,7 @@ export default function ManifestGenerator() {
                   <div key={idx} className="bg-gray-900 p-3 rounded space-y-2">
                     <div className="flex justify-between items-center">
                       <span className="text-green-300 text-sm">Project {idx + 1}</span>
-                      <button onClick={() => deleteProject(idx)} className="text-red-400 hover:text-red-300">
+                      <button onClick={() => deleteProject(idx)} className="text-red-400 hover:text-red-300 transition">
                         <Trash2 size={14} />
                       </button>
                     </div>
@@ -233,30 +235,30 @@ export default function ManifestGenerator() {
                       placeholder="Path (e.g., device/xiaomi/apollo)"
                       value={project.path}
                       onChange={(e) => updateProject(idx, 'path', e.target.value)}
-                      className="w-full bg-gray-800 text-white px-2 py-1 rounded text-sm border border-gray-600"
+                      className="w-full bg-gray-800 text-white px-2 py-1 rounded text-sm border border-gray-600 focus:border-green-500 focus:outline-none"
                     />
                     <input
                       type="text"
-                      placeholder="Name (e.g., android_device_xiaomi_apollo)"
+                      placeholder="Name (must match project name in remote"
                       value={project.name}
                       onChange={(e) => updateProject(idx, 'name', e.target.value)}
-                      className="w-full bg-gray-800 text-white px-2 py-1 rounded text-sm border border-gray-600"
+                      className="w-full bg-gray-800 text-white px-2 py-1 rounded text-sm border border-gray-600 focus:border-green-500 focus:outline-none"
                     />
                     <input
                       type="text"
                       placeholder="Remote (must match a remote above)"
                       value={project.remote}
                       onChange={(e) => updateProject(idx, 'remote', e.target.value)}
-                      className="w-full bg-gray-800 text-white px-2 py-1 rounded text-sm border border-gray-600"
+                      className="w-full bg-gray-800 text-white px-2 py-1 rounded text-sm border border-gray-600 focus:border-green-500 focus:outline-none"
                     />
                     <input
                       type="text"
                       placeholder="Branch (e.g., lineage-21.0)"
                       value={project.branch}
                       onChange={(e) => updateProject(idx, 'branch', e.target.value)}
-                      className="w-full bg-gray-800 text-white px-2 py-1 rounded text-sm border border-gray-600"
+                      className="w-full bg-gray-800 text-white px-2 py-1 rounded text-sm border border-gray-600 focus:border-green-500 focus:outline-none"
                     />
-                    <label className="flex items-center gap-2 text-gray-300 text-sm">
+                    <label className="flex items-center gap-2 text-gray-300 text-sm cursor-pointer">
                       <input
                         type="checkbox"
                         checked={project.commented}
@@ -274,7 +276,7 @@ export default function ManifestGenerator() {
             <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
               <div className="flex justify-between items-center mb-3">
                 <h2 className="text-xl font-semibold text-white">Remove Projects</h2>
-                <button onClick={addRemoveProject} className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm">
+                <button onClick={addRemoveProject} className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm transition">
                   <Plus size={16} /> Add to Remove
                 </button>
               </div>
@@ -287,9 +289,9 @@ export default function ManifestGenerator() {
                       placeholder="Project name (e.g., platform/external/libcxx)"
                       value={rp.name}
                       onChange={(e) => updateRemoveProject(idx, e.target.value)}
-                      className="flex-1 bg-gray-800 text-white px-2 py-1 rounded text-sm border border-gray-600"
+                      className="flex-1 bg-gray-800 text-white px-2 py-1 rounded text-sm border border-gray-600 focus:border-red-500 focus:outline-none"
                     />
-                    <button onClick={() => deleteRemoveProject(idx)} className="text-red-400 hover:text-red-300 p-1">
+                    <button onClick={() => deleteRemoveProject(idx)} className="text-red-400 hover:text-red-300 p-1 transition">
                       <Trash2 size={14} />
                     </button>
                   </div>
@@ -300,30 +302,40 @@ export default function ManifestGenerator() {
             {/* Test Section */}
             <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
               <h2 className="text-xl font-semibold text-white mb-3">Test Your Manifest</h2>
+              <div className="bg-gray-900 border border-gray-600 rounded p-3 mb-3">
+                <p className="text-gray-300 text-sm mb-2">
+                  <strong>What this test does:</strong>
+                </p>
+                <ul className="text-gray-400 text-xs space-y-1 ml-4 list-disc">
+                  <li>Validates XML syntax with the ROM manifest</li>
+                  <li>Verifies each repository URL is accessible</li>
+                  <li>Checks if branch/revision exists in each repository</li>
+                </ul>
+              </div>
               <div className="space-y-3">
                 <input
                   type="text"
                   placeholder="ROM manifest URL (e.g., https://github.com/LineageOS/android.git)"
                   value={romManifest}
                   onChange={(e) => setRomManifest(e.target.value)}
-                  className="w-full bg-gray-900 text-white px-3 py-2 rounded border border-gray-600"
+                  className="w-full bg-gray-900 text-white px-3 py-2 rounded border border-gray-600 focus:border-yellow-500 focus:outline-none"
                 />
                 <input
                   type="text"
                   placeholder="ROM Branch (e.g., lineage-21.0)"
                   value={romBranch}
                   onChange={(e) => setRomBranch(e.target.value)}
-                  className="w-full bg-gray-900 text-white px-3 py-2 rounded border border-gray-600"
+                  className="w-full bg-gray-900 text-white px-3 py-2 rounded border border-gray-600 focus:border-yellow-500 focus:outline-none"
                 />
                 <button
                   onClick={testManifest}
                   disabled={testing}
-                  className="w-full flex items-center justify-center gap-2 bg-yellow-600 hover:bg-yellow-700 disabled:bg-gray-700 text-white px-4 py-2 rounded transition"
+                  className="w-full flex items-center justify-center gap-2 bg-yellow-600 hover:bg-yellow-700 disabled:bg-gray-700 disabled:cursor-not-allowed text-white px-4 py-2 rounded transition"
                 >
                   {testing ? (
                     <>
                       <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
-                      Testing...
+                      Starting Test...
                     </>
                   ) : (
                     <>
@@ -335,16 +347,31 @@ export default function ManifestGenerator() {
               
               {testResult && (
                 <div className={`mt-3 p-3 rounded ${testResult.success ? 'bg-green-900/50 border border-green-600' : 'bg-red-900/50 border border-red-600'}`}>
-                  <p className="text-white text-sm">{testResult.message}</p>
-                  {testResult.success && testResult.actionsUrl && (
-                    <a
-                      href={testResult.actionsUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-block mt-2 text-blue-300 hover:text-blue-200 text-sm"
-                    >
-                      View Test Results →
-                    </a>
+                  <p className="text-white text-sm mb-2">{testResult.message}</p>
+                  {testResult.success && (
+                    <div className="space-y-2">
+                      {testResult.runUrl && (
+                        <a
+                          href={testResult.runUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded text-sm transition"
+                        >
+                          <ExternalLink size={14} />
+                          View Your Test Run
+                        </a>
+                      )}
+                      {!testResult.runUrl && testResult.workflowUrl && (
+                        <a
+                          href={testResult.workflowUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-blue-300 hover:text-blue-200 text-sm"
+                        >
+                          View All Test Runs →
+                        </a>
+                      )}
+                    </div>
                   )}
                 </div>
               )}
@@ -359,13 +386,13 @@ export default function ManifestGenerator() {
                 <div className="flex gap-2">
                   <button
                     onClick={copyToClipboard}
-                    className="flex items-center gap-1 bg-gray-700 hover:bg-gray-600 text-white px-3 py-2 rounded text-sm"
+                    className="flex items-center gap-1 bg-gray-700 hover:bg-gray-600 text-white px-3 py-2 rounded text-sm transition"
                   >
                     <Copy size={16} /> {copied ? 'Copied!' : 'Copy'}
                   </button>
                   <button
                     onClick={downloadManifest}
-                    className="flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded text-sm"
+                    className="flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded text-sm transition"
                   >
                     <Download size={16} /> Download
                   </button>
