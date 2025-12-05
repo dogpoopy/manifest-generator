@@ -147,7 +147,7 @@ export default function ManifestGenerator() {
 
   const testManifest = async () => {
     if (!romManifest || !romBranch) {
-      alert('Please enter ROM source and branch');
+      alert('Please enter ROM manifest and branch');
       return;
     }
 
@@ -416,7 +416,7 @@ export default function ManifestGenerator() {
               <div className="space-y-3">
                 <input
                   type="text"
-                  placeholder="ROM Source (e.g., LineageOS/android)"
+                  placeholder="ROM manifest URL (e.g., https://github.com/LineageOS/android.git)"
                   value={romManifest}
                   onChange={(e) => setromManifest(e.target.value)}
                   className="w-full bg-white/10 text-white placeholder-gray-400 px-3 py-2 rounded border border-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500"
