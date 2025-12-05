@@ -195,14 +195,14 @@ export default function ManifestGenerator() {
                     </div>
                     <input
                       type="text"
-                      placeholder="Name (e.g., github)"
+                      placeholder="Name (e.g., remote1)"
                       value={remote.name}
                       onChange={(e) => updateRemote(idx, 'name', e.target.value)}
                       className="w-full bg-gray-800 text-white px-2 py-1 rounded text-sm border border-gray-600 focus:border-blue-500 focus:outline-none"
                     />
                     <input
                       type="text"
-                      placeholder="Fetch URL (e.g., https://github.com/)"
+                      placeholder="Fetch URL (e.g., https://github.com/your_username)"
                       value={remote.fetch}
                       onChange={(e) => updateRemote(idx, 'fetch', e.target.value)}
                       className="w-full bg-gray-800 text-white px-2 py-1 rounded text-sm border border-gray-600 focus:border-blue-500 focus:outline-none"
@@ -286,7 +286,7 @@ export default function ManifestGenerator() {
                   <div key={idx} className="bg-gray-900 p-2 rounded flex items-center gap-2">
                     <input
                       type="text"
-                      placeholder="Project name (e.g., platform/external/libcxx)"
+                      placeholder="Project name (e.g., hardware_xiaomi)"
                       value={rp.name}
                       onChange={(e) => updateRemoveProject(idx, e.target.value)}
                       className="flex-1 bg-gray-800 text-white px-2 py-1 rounded text-sm border border-gray-600 focus:border-red-500 focus:outline-none"
