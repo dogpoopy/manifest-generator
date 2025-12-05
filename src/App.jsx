@@ -246,14 +246,14 @@ export default function ManifestGenerator() {
                     />
                     <input
                       type="text"
-                      placeholder="Remote (must match a remote above)"
+                      placeholder="Remote (must match a remote name above)"
                       value={project.remote}
                       onChange={(e) => updateProject(idx, 'remote', e.target.value)}
                       className="w-full bg-gray-800 text-white px-2 py-1 rounded text-sm border border-gray-600 focus:border-green-500 focus:outline-none"
                     />
                     <input
                       type="text"
-                      placeholder="Branch (e.g., lineage-21.0)"
+                      placeholder="Branch (must match branch in remote)"
                       value={project.branch}
                       onChange={(e) => updateProject(idx, 'branch', e.target.value)}
                       className="w-full bg-gray-800 text-white px-2 py-1 rounded text-sm border border-gray-600 focus:border-green-500 focus:outline-none"
