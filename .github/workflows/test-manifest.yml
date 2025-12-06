@@ -51,7 +51,6 @@ jobs:
           cat rom-source/.repo/local_manifests/local_manifest.xml
 
       - name: Validate manifest syntax
-        id: test
         continue-on-error: false
         run: |
           cd rom-source
@@ -63,7 +62,6 @@ jobs:
 
 
       - name: Verify repositories and revisions
-        id: verify_repos
         run: |
           cd rom-source
 
