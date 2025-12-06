@@ -64,10 +64,20 @@ export default function ManifestGenerator() {
       xml += '  <!-- Remotes -->\n';
       remotes.forEach(remote => {
         if (remote.name && remote.fetch) {
-          xml += `  <remote name="${remote.name}"\n`;
-          xml += `          fetch="${remote.fetch}" />\n\n`;
+          xml += `  <remote name="${remote.name}" fetch="${remote.fetch}" />\n`;
         }
       });
+      xml += '\n';
+    }
+
+    if (removeProjects.length > 0) {
+      xml += '  <!-- Remove Projects -->\n';
+      removeProjects.forEach(rp => {
+        if (rp.path) {
+          xml += `  <remove-project path="${rp.path}" />\n`;
+        }
+      });
+      xml += '\n';
     }
 
     if (projects.length > 0) {
@@ -76,15 +86,6 @@ export default function ManifestGenerator() {
         if (project.path && project.name) {
           const line = `  <project path="${project.path}" name="${project.name}"${project.remote ? ` remote="${project.remote}"` : ''}${project.branch ? ` revision="${project.branch}"` : ''} />`;
           xml += project.commented ? `  <!--${line} -->\n` : `${line}\n`;
-        }
-      });
-    }
-
-    if (removeProjects.length > 0) {
-      xml += '\n  <!-- Remove Projects -->\n';
-      removeProjects.forEach(rp => {
-        if (rp.path) {
-          xml += `  <remove-project path="${rp.path}" />\n`;
         }
       });
     }
