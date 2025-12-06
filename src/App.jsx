@@ -43,12 +43,12 @@ export default function ManifestGenerator() {
 
   // Remove Projects handlers
   const addRemoveProject = useCallback(() => {
-    setRemoveProjects([...removeProjects, { name: '' }]);
+    setRemoveProjects([...removeProjects, { path: '' }]);
   }, [removeProjects]);
 
   const updateRemoveProject = useCallback((index, value) => {
     const updated = [...removeProjects];
-    updated[index].name = value;
+    updated[index].path = value;
     setRemoveProjects(updated);
   }, [removeProjects]);
 
@@ -83,8 +83,8 @@ export default function ManifestGenerator() {
     if (removeProjects.length > 0) {
       xml += '\n  <!-- Remove Projects -->\n';
       removeProjects.forEach(rp => {
-        if (rp.name) {
-          xml += `  <remove-project name="${rp.name}" />\n`;
+        if (rp.path) {
+          xml += `  <remove-project path="${rp.path}" />\n`;
         }
       });
     }
@@ -286,8 +286,8 @@ export default function ManifestGenerator() {
                   <div key={idx} className="bg-gray-900 p-2 rounded flex items-center gap-2">
                     <input
                       type="text"
-                      placeholder="Project name (e.g., hardware_xiaomi)"
-                      value={rp.name}
+                      placeholder="Project path (e.g., hardware/xiaomi)"
+                      value={rp.path}
                       onChange={(e) => updateRemoveProject(idx, e.target.value)}
                       className="flex-1 bg-gray-800 text-white px-2 py-1 rounded text-sm border border-gray-600 focus:border-red-500 focus:outline-none"
                     />
