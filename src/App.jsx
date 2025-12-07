@@ -348,7 +348,8 @@ export default function ManifestGenerator() {
                     value={interactiveManifest}
                     onChange={(e) => setInteractiveManifest(e.target.value)}
                     placeholder="Paste your manifest here or use the generated one above..."
-                    className="w-full bg-black text-green-400 px-3 py-2 rounded border border-gray-600 focus:border-yellow-500 focus:outline-none font-mono text-xs h-48 lg:h-64 resize-none"
+                    className="w-full bg-black text-green-400 px-3 py-2 rounded border border-gray-600 focus:border-yellow-500 focus:outline-none font-mono text-xs h-48 lg:h-64 resize-none overflow-x-auto whitespace-pre"
+                    wrap="off"
                   />
                   <p className="text-gray-500 text-xs mt-1">
                     💡 Edit this content directly, or paste your existing manifest here to test it
