@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Plus, Trash2, Copy, Download, Play, ExternalLink } from 'lucide-react';
 
 export default function ManifestGenerator() {
@@ -10,6 +10,49 @@ export default function ManifestGenerator() {
   const [testResult, setTestResult] = useState(null);
   const [romManifest, setRomManifest] = useState('');
   const [romBranch, setRomBranch] = useState('');
+  const [interactiveManifest, setInteractiveManifest] = useState('');
+
+  // Generate XML
+  const generateManifest = useCallback(() => {
+    let xml = '<?xml version="1.0" encoding="UTF-8"?>\n<manifest>\n\n';
+    
+    if (remotes.length > 0) {
+      xml += '  <!-- Remotes -->\n';
+      remotes.forEach(remote => {
+        if (remote.name && remote.fetch) {
+          xml += `  <remote name="${remote.name}" fetch="${remote.fetch}" />\n`;
+        }
+      });
+      xml += '\n';
+    }
+
+    if (removeProjects.length > 0) {
+      xml += '  <!-- Remove Projects -->\n';
+      removeProjects.forEach(rp => {
+        if (rp.path) {
+          xml += `  <remove-project path="${rp.path}" />\n`;
+        }
+      });
+      xml += '\n';
+    }
+
+    if (projects.length > 0) {
+      xml += '  <!-- Projects -->\n';
+      projects.forEach(project => {
+        if (project.path && project.name) {
+          const line = `  <project path="${project.path}" name="${project.name}"${project.remote ? ` remote="${project.remote}"` : ''}${project.branch ? ` revision="${project.branch}"` : ''} />`;
+          xml += project.commented ? `  <!--${line} -->\n` : `${line}\n`;
+        }
+      });
+    }
+
+    xml += '\n</manifest>';
+    return xml;
+  }, [remotes, projects, removeProjects]);
+
+  useEffect(() => {
+    setInteractiveManifest(generateManifest());
+  }, [generateManifest]);
 
   // Remotes handlers
   const addRemote = useCallback(() => {
@@ -56,44 +99,6 @@ export default function ManifestGenerator() {
     setRemoveProjects(removeProjects.filter((_, i) => i !== index));
   }, [removeProjects]);
 
-  // Generate XML
-  const generateManifest = () => {
-    let xml = '<?xml version="1.0" encoding="UTF-8"?>\n<manifest>\n\n';
-    
-    if (remotes.length > 0) {
-      xml += '  <!-- Remotes -->\n';
-      remotes.forEach(remote => {
-        if (remote.name && remote.fetch) {
-          xml += `  <remote name="${remote.name}" fetch="${remote.fetch}" />\n`;
-        }
-      });
-      xml += '\n';
-    }
-
-    if (removeProjects.length > 0) {
-      xml += '  <!-- Remove Projects -->\n';
-      removeProjects.forEach(rp => {
-        if (rp.path) {
-          xml += `  <remove-project path="${rp.path}" />\n`;
-        }
-      });
-      xml += '\n';
-    }
-
-    if (projects.length > 0) {
-      xml += '  <!-- Projects -->\n';
-      projects.forEach(project => {
-        if (project.path && project.name) {
-          const line = `  <project path="${project.path}" name="${project.name}"${project.remote ? ` remote="${project.remote}"` : ''}${project.branch ? ` revision="${project.branch}"` : ''} />`;
-          xml += project.commented ? `  <!--${line} -->\n` : `${line}\n`;
-        }
-      });
-    }
-
-    xml += '\n</manifest>';
-    return xml;
-  };
-
   const copyToClipboard = () => {
     navigator.clipboard.writeText(generateManifest());
     setCopied(true);
@@ -116,9 +121,9 @@ export default function ManifestGenerator() {
       return;
     }
 
-    const manifest = generateManifest();
+    const manifest = interactiveManifest.trim();
     
-    if (!manifest.includes('<project') && !manifest.includes('<remove-project')) {
+    if (!manifest || (!manifest.includes('<project') && !manifest.includes('<remove-project'))) {
       alert('Please add at least one project to test');
       return;
     }
@@ -328,6 +333,29 @@ export default function ManifestGenerator() {
                   onChange={(e) => setRomBranch(e.target.value)}
                   className="w-full bg-gray-900 text-white px-3 py-2 rounded border border-gray-600 focus:border-yellow-500 focus:outline-none"
                 />
+                
+                {/* Interactive Manifest Area */}
+                <div>
+                  <div className="flex justify-between items-center mb-2">
+                    <label className="text-gray-300 text-sm font-medium">Manifest Content</label>
+                    <button
+                      onClick={() => setInteractiveManifest(generateManifest())}
+                      className="text-blue-400 hover:text-blue-300 text-xs flex items-center gap-1 transition"
+                    >
+                      <Copy size={12} /> Reset to Generated
+                    </button>
+                  </div>
+                  <textarea
+                    value={interactiveManifest}
+                    onChange={(e) => setInteractiveManifest(e.target.value)}
+                    placeholder="Paste your manifest here or use the generated one above..."
+                    className="w-full bg-black text-green-400 px-3 py-2 rounded border border-gray-600 focus:border-yellow-500 focus:outline-none font-mono text-xs h-64 resize-none"
+                  />
+                  <p className="text-gray-500 text-xs mt-1">
+                    💡 Edit this content directly, or paste your existing manifest here to test it
+                  </p>
+                </div>
+
                 <button
                   onClick={testManifest}
                   disabled={testing}
