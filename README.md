@@ -43,11 +43,11 @@ Add repositories required for your build. Each project needs:
 `Branch: main`
 
 ### 3. Remove Projects (Optional)
-Remove unwanted or conflicting repositories.  
+Remove unwanted or conflicting repositories by specifying their paths.  
 
 **Example:**
 
-`Project name: hardware_xiaomi`
+`Project path: hardware/xiaomi`
 
 ### 4. Verify & Generate
 1. Review the generated manifest in the preview panel  
