@@ -58,4 +58,11 @@ Validate your manifest against a ROM manifest:
 
 - Enter the ROM URL (e.g., `https://github.com/LineageOS/android.git`)  
 - Enter the ROM branch (e.g., `lineage-21.0`)  
+- Edit or paste your manifest content in the text area
 - Click **Test Manifest** to run validation via GitHub Actions
+
+**What the test validates:**
+
+- XML syntax and compatibility with the ROM manifest  
+- Repository URL accessibility  
+- Branch/revision existence in each repository
