@@ -179,8 +179,7 @@ export default function ManifestGenerator() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Left Column: Inputs */}
-          <div className="space-y-6">
+          <div className="space-y-6 order-2 lg:order-1">
             {/* Remotes Section */}
             <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
               <div className="flex justify-between items-center mb-3">
@@ -324,14 +323,14 @@ export default function ManifestGenerator() {
                   placeholder="ROM manifest URL (e.g., https://github.com/LineageOS/android.git)"
                   value={romManifest}
                   onChange={(e) => setRomManifest(e.target.value)}
-                  className="w-full bg-gray-900 text-white px-3 py-2 rounded border border-gray-600 focus:border-yellow-500 focus:outline-none"
+                  className="w-full bg-gray-900 text-white px-3 py-2 rounded text-sm border border-gray-600 focus:border-yellow-500 focus:outline-none"
                 />
                 <input
                   type="text"
                   placeholder="ROM Branch (e.g., lineage-21.0)"
                   value={romBranch}
                   onChange={(e) => setRomBranch(e.target.value)}
-                  className="w-full bg-gray-900 text-white px-3 py-2 rounded border border-gray-600 focus:border-yellow-500 focus:outline-none"
+                  className="w-full bg-gray-900 text-white px-3 py-2 rounded text-sm border border-gray-600 focus:border-yellow-500 focus:outline-none"
                 />
                 
                 {/* Interactive Manifest Area */}
@@ -349,7 +348,7 @@ export default function ManifestGenerator() {
                     value={interactiveManifest}
                     onChange={(e) => setInteractiveManifest(e.target.value)}
                     placeholder="Paste your manifest here or use the generated one above..."
-                    className="w-full bg-black text-green-400 px-3 py-2 rounded border border-gray-600 focus:border-yellow-500 focus:outline-none font-mono text-xs h-64 resize-none"
+                    className="w-full bg-black text-green-400 px-3 py-2 rounded border border-gray-600 focus:border-yellow-500 focus:outline-none font-mono text-xs h-48 lg:h-64 resize-none"
                   />
                   <p className="text-gray-500 text-xs mt-1">
                     💡 Edit this content directly, or paste your existing manifest here to test it
@@ -407,8 +406,7 @@ export default function ManifestGenerator() {
             </div>
           </div>
 
-          {/* Right Column: Output */}
-          <div className="lg:sticky lg:top-4">
+          <div className="lg:sticky lg:top-4 order-1 lg:order-2">
             <div className="bg-gray-800 rounded-lg p-4 border border-gray-700 h-full">
               <div className="flex justify-between items-center mb-3">
                 <h2 className="text-xl font-semibold text-white">Generated Manifest</h2>
@@ -427,7 +425,7 @@ export default function ManifestGenerator() {
                   </button>
                 </div>
               </div>
-              <pre className="bg-black text-green-400 p-3 rounded overflow-x-auto text-sm font-mono h-[calc(100vh-12rem)] overflow-y-auto border border-gray-600">
+              <pre className="bg-black text-green-400 p-3 rounded overflow-x-auto text-sm font-mono h-64 lg:h-[calc(100vh-12rem)] overflow-y-auto border border-gray-600">
                 {generateManifest()}
               </pre>
             </div>
