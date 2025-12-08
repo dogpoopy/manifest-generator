@@ -40,8 +40,20 @@ export default function ManifestGenerator() {
       xml += '  <!-- Projects -->\n';
       projects.forEach(project => {
         if (project.path && project.name) {
-          const line = `  <project path="${project.path}" name="${project.name}"${project.remote ? ` remote="${project.remote}"` : ''}${project.branch ? ` revision="${project.branch}"` : ''}${project.shallowClone ? ' clone-depth="1"' : ''} />`;
-          xml += project.commented ? `  <!--${line} -->\n` : `${line}\n`;
+          let line = `  <project path="${project.path}"\n`;
+          line += `           name="${project.name}"`;
+          if (project.remote) {
+            line += `\n           remote="${project.remote}"`;
+          }
+          if (project.branch) {
+            line += `\n           revision="${project.branch}"`;
+          }
+          if (project.shallowClone) {
+            line += `\n           clone-depth="1"`;
+          }
+          line += ' />';
+          
+          xml += project.commented ? `  <!--\n${line}\n  -->\n` : `${line}\n`;
         }
       });
     }
