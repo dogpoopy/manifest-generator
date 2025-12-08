@@ -40,7 +40,7 @@ export default function ManifestGenerator() {
       xml += '  <!-- Projects -->\n';
       projects.forEach(project => {
         if (project.path && project.name) {
-          const line = `  <project path="${project.path}" name="${project.name}"${project.remote ? ` remote="${project.remote}"` : ''}${project.branch ? ` revision="${project.branch}"` : ''} />`;
+          const line = `  <project path="${project.path}" name="${project.name}"${project.remote ? ` remote="${project.remote}"` : ''}${project.branch ? ` revision="${project.branch}"` : ''}${project.shallowClone ? ' clone-depth="1"' : ''} />`;
           xml += project.commented ? `  <!--${line} -->\n` : `${line}\n`;
         }
       });
@@ -71,7 +71,7 @@ export default function ManifestGenerator() {
 
   // Projects handlers
   const addProject = useCallback(() => {
-    setProjects([...projects, { path: '', name: '', remote: '', branch: '', commented: false }]);
+    setProjects([...projects, { path: '', name: '', remote: '', branch: '', commented: false, shallowClone: false }]);
   }, [projects]);
 
   const updateProject = useCallback((index, field, value) => {
@@ -263,15 +263,26 @@ export default function ManifestGenerator() {
                       onChange={(e) => updateProject(idx, 'branch', e.target.value)}
                       className="w-full bg-gray-800 text-white px-2 py-1 rounded text-sm border border-gray-600 focus:border-green-500 focus:outline-none"
                     />
-                    <label className="flex items-center gap-2 text-gray-300 text-sm cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={project.commented}
-                        onChange={(e) => updateProject(idx, 'commented', e.target.checked)}
-                        className="w-3 h-3"
-                      />
-                      Comment out (disable in manifest)
-                    </label>
+                    <div className="flex gap-4">
+                      <label className="flex items-center gap-2 text-gray-300 text-sm cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={project.shallowClone}
+                          onChange={(e) => updateProject(idx, 'shallowClone', e.target.checked)}
+                          className="w-3 h-3"
+                        />
+                        Shallow clone
+                      </label>
+                      <label className="flex items-center gap-2 text-gray-300 text-sm cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={project.commented}
+                          onChange={(e) => updateProject(idx, 'commented', e.target.checked)}
+                          className="w-3 h-3"
+                        />
+                        Comment out (disable)
+                      </label>
+                    </div>
                   </div>
                 ))}
               </div>

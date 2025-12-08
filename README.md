@@ -42,6 +42,12 @@ Add repositories required for your build. Each project needs:
 `Remote: remote1`  
 `Branch: main`
 
+**Shallow Clone Option**
+- Each project has an optional Shallow clone checkbox. When enabled, it adds clone-depth="1" to the project.
+- A shallow clone downloads only the latest commit instead of the entire repository history.
+This is useful if you want to sync faster and use less disk space in a 'build only' server.
+
+
 ### 3. Remove Projects (Optional)
 Remove unwanted or conflicting repositories by specifying their paths.  
 
