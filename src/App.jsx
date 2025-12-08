@@ -256,7 +256,7 @@ export default function ManifestGenerator() {
                     />
                     <input
                       type="text"
-                      placeholder="Name (must match project name in remote"
+                      placeholder="Name (must match your repository name)"
                       value={project.name}
                       onChange={(e) => updateProject(idx, 'name', e.target.value)}
                       className="w-full bg-gray-800 text-white px-2 py-1 rounded text-sm border border-gray-600 focus:border-green-500 focus:outline-none"
@@ -270,7 +270,7 @@ export default function ManifestGenerator() {
                     />
                     <input
                       type="text"
-                      placeholder="Branch (must match branch in remote)"
+                      placeholder="Branch (must match your repository branch)"
                       value={project.branch}
                       onChange={(e) => updateProject(idx, 'branch', e.target.value)}
                       className="w-full bg-gray-800 text-white px-2 py-1 rounded text-sm border border-gray-600 focus:border-green-500 focus:outline-none"
