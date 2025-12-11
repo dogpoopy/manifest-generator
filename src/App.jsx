@@ -203,27 +203,33 @@ export default function ManifestGenerator() {
               <p className="text-gray-400 text-sm mb-3">Define git remotes for your projects</p>
               <div className="space-y-3 max-h-64 overflow-y-auto">
                 {remotes.map((remote, idx) => (
-                  <div key={idx} className="bg-gray-900 p-3 rounded space-y-2">
+                  <div key={idx} className="bg-gray-900 p-3 rounded space-y-3">
                     <div className="flex justify-between items-center">
-                      <span className="text-blue-300 text-sm">Remote {idx + 1}</span>
+                      <span className="text-blue-300 text-sm font-medium">Remote {idx + 1}</span>
                       <button onClick={() => deleteRemote(idx)} className="text-red-400 hover:text-red-300 transition">
                         <Trash2 size={14} />
                       </button>
                     </div>
-                    <input
-                      type="text"
-                      placeholder="Name (e.g., remote1)"
-                      value={remote.name}
-                      onChange={(e) => updateRemote(idx, 'name', e.target.value)}
-                      className="w-full bg-gray-800 text-white px-2 py-1 rounded text-sm border border-gray-600 focus:border-blue-500 focus:outline-none"
-                    />
-                    <input
-                      type="text"
-                      placeholder="Fetch URL (e.g., https://github.com/your_username)"
-                      value={remote.fetch}
-                      onChange={(e) => updateRemote(idx, 'fetch', e.target.value)}
-                      className="w-full bg-gray-800 text-white px-2 py-1 rounded text-sm border border-gray-600 focus:border-blue-500 focus:outline-none"
-                    />
+                    <div>
+                      <label className="block text-gray-300 text-xs font-medium mb-1">Name</label>
+                      <input
+                        type="text"
+                        placeholder="e.g., remote1"
+                        value={remote.name}
+                        onChange={(e) => updateRemote(idx, 'name', e.target.value)}
+                        className="w-full bg-gray-800 text-white px-2 py-1.5 rounded text-sm border border-gray-600 focus:border-blue-500 focus:outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-gray-300 text-xs font-medium mb-1">Fetch URL</label>
+                      <input
+                        type="text"
+                        placeholder="e.g., https://github.com/your_username"
+                        value={remote.fetch}
+                        onChange={(e) => updateRemote(idx, 'fetch', e.target.value)}
+                        className="w-full bg-gray-800 text-white px-2 py-1.5 rounded text-sm border border-gray-600 focus:border-blue-500 focus:outline-none"
+                      />
+                    </div>
                   </div>
                 ))}
               </div>
@@ -240,41 +246,53 @@ export default function ManifestGenerator() {
               <p className="text-gray-400 text-sm mb-3">Add device, vendor, kernel, and other repositories</p>
               <div className="space-y-3 max-h-96 overflow-y-auto">
                 {projects.map((project, idx) => (
-                  <div key={idx} className="bg-gray-900 p-3 rounded space-y-2">
+                  <div key={idx} className="bg-gray-900 p-3 rounded space-y-3">
                     <div className="flex justify-between items-center">
-                      <span className="text-green-300 text-sm">Project {idx + 1}</span>
+                      <span className="text-green-300 text-sm font-medium">Project {idx + 1}</span>
                       <button onClick={() => deleteProject(idx)} className="text-red-400 hover:text-red-300 transition">
                         <Trash2 size={14} />
                       </button>
                     </div>
-                    <input
-                      type="text"
-                      placeholder="Path (e.g., device/xiaomi/apollo)"
-                      value={project.path}
-                      onChange={(e) => updateProject(idx, 'path', e.target.value)}
-                      className="w-full bg-gray-800 text-white px-2 py-1 rounded text-sm border border-gray-600 focus:border-green-500 focus:outline-none"
-                    />
-                    <input
-                      type="text"
-                      placeholder="Name (must match your repository name)"
-                      value={project.name}
-                      onChange={(e) => updateProject(idx, 'name', e.target.value)}
-                      className="w-full bg-gray-800 text-white px-2 py-1 rounded text-sm border border-gray-600 focus:border-green-500 focus:outline-none"
-                    />
-                    <input
-                      type="text"
-                      placeholder="Remote (must match a remote name above)"
-                      value={project.remote}
-                      onChange={(e) => updateProject(idx, 'remote', e.target.value)}
-                      className="w-full bg-gray-800 text-white px-2 py-1 rounded text-sm border border-gray-600 focus:border-green-500 focus:outline-none"
-                    />
-                    <input
-                      type="text"
-                      placeholder="Branch (must match your repository branch)"
-                      value={project.branch}
-                      onChange={(e) => updateProject(idx, 'branch', e.target.value)}
-                      className="w-full bg-gray-800 text-white px-2 py-1 rounded text-sm border border-gray-600 focus:border-green-500 focus:outline-none"
-                    />
+                    <div>
+                      <label className="block text-gray-300 text-xs font-medium mb-1">Path</label>
+                      <input
+                        type="text"
+                        placeholder="e.g., device/xiaomi/apollo"
+                        value={project.path}
+                        onChange={(e) => updateProject(idx, 'path', e.target.value)}
+                        className="w-full bg-gray-800 text-white px-2 py-1.5 rounded text-sm border border-gray-600 focus:border-green-500 focus:outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-gray-300 text-xs font-medium mb-1">Repository Name</label>
+                      <input
+                        type="text"
+                        placeholder="Must match your repository name"
+                        value={project.name}
+                        onChange={(e) => updateProject(idx, 'name', e.target.value)}
+                        className="w-full bg-gray-800 text-white px-2 py-1.5 rounded text-sm border border-gray-600 focus:border-green-500 focus:outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-gray-300 text-xs font-medium mb-1">Remote</label>
+                      <input
+                        type="text"
+                        placeholder="Must match a remote name above"
+                        value={project.remote}
+                        onChange={(e) => updateProject(idx, 'remote', e.target.value)}
+                        className="w-full bg-gray-800 text-white px-2 py-1.5 rounded text-sm border border-gray-600 focus:border-green-500 focus:outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-gray-300 text-xs font-medium mb-1">Branch</label>
+                      <input
+                        type="text"
+                        placeholder="Must match your repository branch"
+                        value={project.branch}
+                        onChange={(e) => updateProject(idx, 'branch', e.target.value)}
+                        className="w-full bg-gray-800 text-white px-2 py-1.5 rounded text-sm border border-gray-600 focus:border-green-500 focus:outline-none"
+                      />
+                    </div>
                     <div className="flex gap-4">
                       <label className="flex items-center gap-2 text-gray-300 text-sm cursor-pointer">
                         <input
@@ -309,19 +327,22 @@ export default function ManifestGenerator() {
                 </button>
               </div>
               <p className="text-gray-400 text-sm mb-3">Projects to remove from the ROM source</p>
-              <div className="space-y-2 max-h-40 overflow-y-auto">
+              <div className="space-y-3 max-h-40 overflow-y-auto">
                 {removeProjects.map((rp, idx) => (
-                  <div key={idx} className="bg-gray-900 p-2 rounded flex items-center gap-2">
+                  <div key={idx} className="bg-gray-900 p-3 rounded space-y-2">
+                    <div className="flex justify-between items-center">
+                      <label className="block text-gray-300 text-xs font-medium">Project Path</label>
+                      <button onClick={() => deleteRemoveProject(idx)} className="text-red-400 hover:text-red-300 p-1 transition">
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
                     <input
                       type="text"
-                      placeholder="Project path (e.g., hardware/xiaomi)"
+                      placeholder="e.g., hardware/xiaomi"
                       value={rp.path}
                       onChange={(e) => updateRemoveProject(idx, e.target.value)}
-                      className="flex-1 bg-gray-800 text-white px-2 py-1 rounded text-sm border border-gray-600 focus:border-red-500 focus:outline-none"
+                      className="w-full bg-gray-800 text-white px-2 py-1.5 rounded text-sm border border-gray-600 focus:border-red-500 focus:outline-none"
                     />
-                    <button onClick={() => deleteRemoveProject(idx)} className="text-red-400 hover:text-red-300 p-1 transition">
-                      <Trash2 size={14} />
-                    </button>
                   </div>
                 ))}
               </div>
@@ -341,20 +362,26 @@ export default function ManifestGenerator() {
                 </ul>
               </div>
               <div className="space-y-3">
-                <input
-                  type="text"
-                  placeholder="ROM manifest URL (e.g., https://github.com/LineageOS/android.git)"
-                  value={romManifest}
-                  onChange={(e) => setRomManifest(e.target.value)}
-                  className="w-full bg-gray-900 text-white px-3 py-2 rounded text-sm border border-gray-600 focus:border-yellow-500 focus:outline-none"
-                />
-                <input
-                  type="text"
-                  placeholder="ROM Branch (e.g., lineage-21.0)"
-                  value={romBranch}
-                  onChange={(e) => setRomBranch(e.target.value)}
-                  className="w-full bg-gray-900 text-white px-3 py-2 rounded text-sm border border-gray-600 focus:border-yellow-500 focus:outline-none"
-                />
+                <div>
+                  <label className="block text-gray-300 text-sm font-medium mb-1">ROM Manifest URL</label>
+                  <input
+                    type="text"
+                    placeholder="e.g., https://github.com/LineageOS/android.git"
+                    value={romManifest}
+                    onChange={(e) => setRomManifest(e.target.value)}
+                    className="w-full bg-gray-900 text-white px-3 py-2 rounded text-sm border border-gray-600 focus:border-yellow-500 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-gray-300 text-sm font-medium mb-1">ROM Branch</label>
+                  <input
+                    type="text"
+                    placeholder="e.g., lineage-21.0"
+                    value={romBranch}
+                    onChange={(e) => setRomBranch(e.target.value)}
+                    className="w-full bg-gray-900 text-white px-3 py-2 rounded text-sm border border-gray-600 focus:border-yellow-500 focus:outline-none"
+                  />
+                </div>
                 
                 {/* Interactive Manifest Area */}
                 <div>
