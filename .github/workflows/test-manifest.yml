@@ -57,7 +57,7 @@ jobs:
           echo "Validating manifest syntax..."
           
           # Let repo manifest show any errors - it will fail if there are issues
-          repo manifest -o test.xml
+          repo manifest -o local_manifest.xml
           echo "✅ SUCCESS: Manifest is valid!"
 
 
