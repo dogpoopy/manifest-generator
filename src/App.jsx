@@ -162,6 +162,7 @@ export default function ManifestGenerator() {
         setTestResult({
           success: true,
           message: 'Test started successfully! The workflow will verify repository accessibility and manifest validity.',
+          testId: data.testId,
           runUrl: data.runUrl,
           workflowUrl: data.workflowUrl,
           runId: data.runId
@@ -429,6 +430,9 @@ export default function ManifestGenerator() {
                   <p className="text-white text-sm mb-2">{testResult.message}</p>
                   {testResult.success && (
                     <div className="space-y-2">
+                      <div className="text-gray-300 text-sm">
+                        <strong>Test ID:</strong> {testResult.testId || 'Not available'}
+                      </div>
                       {testResult.runUrl && (
                         <a
                           href={testResult.runUrl}

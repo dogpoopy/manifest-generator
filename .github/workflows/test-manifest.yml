@@ -3,6 +3,9 @@ name: Test Manifest
 on:
   workflow_dispatch:
     inputs:
+      test_id:
+        description: 'Unique test identifier'
+        required: false
       rom_manifest:
         description: 'ROM manifest URL(e.g., https://github.com/LineageOS/android.git)'
         required: true
@@ -17,51 +20,67 @@ on:
 jobs:
   test-manifest:
     runs-on: ubuntu-latest
+    name: Test ${{ inputs.test_id }}
     
     steps:
+      - name: Display Test Info
+        run: |
+          echo "=========================================="
+          echo "TEST INFORMATION"
+          echo "=========================================="
+          echo "Test ID: ${{ inputs.test_id }}"
+          echo "ROM: ${{ inputs.rom_manifest }}"
+          echo "Branch: ${{ inputs.rom_branch }}"
+          echo ""
+          echo "Local Manifest Content:"
+          echo "----------------------------------------"
+          cat << 'EOF'
+          ${{ inputs.manifest_content }}
+          EOF
+          echo "=========================================="
+
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install repo tool
+      - name: Setup environment
         run: |
-          sudo apt-get update
+          echo "Installing dependencies..."
+          sudo apt-get update -qq
           sudo apt-get install -y git-core
           pip install lxml
-          wget https://storage.googleapis.com/git-repo-downloads/repo
+          
+          echo "Installing repo tool..."
+          wget -q https://storage.googleapis.com/git-repo-downloads/repo
           sudo mv repo /usr/bin/repo
           sudo chmod a+x /usr/bin/repo
+          
+          echo "Configuring git..."
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Configure Git
+      - name: Initialize ROM source
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-      - name: Initialize repo
-        run: |
+          echo "Initializing repo with ROM manifest..."
           mkdir -p rom-source
           cd rom-source
           repo init --depth=1 --no-repo-verify -u ${{ inputs.rom_manifest }} -b ${{ inputs.rom_branch }}
-
-      - name: Create local manifest
-        run: |
-          mkdir -p rom-source/.repo/local_manifests
-          cat > rom-source/.repo/local_manifests/local_manifest.xml << 'EOF'
+          
+          echo "Creating local manifest..."
+          mkdir -p .repo/local_manifests
+          cat > .repo/local_manifests/local_manifest.xml << 'EOF'
           ${{ inputs.manifest_content }}
           EOF
-          cat rom-source/.repo/local_manifests/local_manifest.xml
 
-      - name: Validate manifest syntax
+      - name: Validate manifest
         continue-on-error: false
         run: |
           cd rom-source
           echo "Validating manifest syntax..."
-          
           # Let repo manifest show any errors - it will fail if there are issues
           repo manifest -o local_manifest.xml
-          echo "✅ SUCCESS: Manifest is valid!"
+          echo "✅ Manifest syntax is valid!"
 
-
-      - name: Verify repositories and revisions
+      - name: Verify repositories
         run: |
           cd rom-source
           python3 ../scripts/verify_repo.py

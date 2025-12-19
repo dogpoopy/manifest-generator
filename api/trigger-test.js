@@ -20,7 +20,10 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Trigger the workflow
+    // Generate a simple 3-digit test ID
+    const testId = `test-${Math.floor(Math.random() * 900) + 100}`;
+    const triggerTime = Date.now();
+    
     const dispatchResponse = await fetch(
       `https://api.github.com/repos/${process.env.GITHUB_REPO}/actions/workflows/test-manifest.yml/dispatches`,
       {
@@ -34,6 +37,7 @@ export default async function handler(req, res) {
         body: JSON.stringify({
           ref: 'main',
           inputs: {
+            test_id: testId,
             rom_manifest: romManifest,
             rom_branch: romBranch,
             manifest_content: manifestContent
@@ -68,6 +72,7 @@ export default async function handler(req, res) {
             return res.status(200).json({ 
               success: true, 
               message: 'Test triggered successfully',
+              testId: testId,
               runId: latestRun.id,
               runUrl: latestRun.html_url,
               status: latestRun.status,
@@ -80,6 +85,7 @@ export default async function handler(req, res) {
         return res.status(200).json({ 
           success: true, 
           message: 'Test triggered successfully',
+          testId: testId,
           workflowUrl: `https://github.com/${process.env.GITHUB_REPO}/actions/workflows/test-manifest.yml`
         });
       } else {
@@ -87,6 +93,7 @@ export default async function handler(req, res) {
         return res.status(200).json({ 
           success: true, 
           message: 'Test triggered successfully',
+          testId: testId,
           runId: workflowInfo.workflow_run_id,
           runUrl: workflowInfo.html_url,
           status: 'queued',
