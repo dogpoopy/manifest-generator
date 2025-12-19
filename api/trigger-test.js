@@ -42,45 +42,57 @@ export default async function handler(req, res) {
       }
     );
 
-    if (dispatchResponse.status === 204) {
-      // Wait a moment for the workflow to be created
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Fetch the most recent workflow run
-      const runsResponse = await fetch(
-        `https://api.github.com/repos/${process.env.GITHUB_REPO}/actions/workflows/test-manifest.yml/runs?per_page=1`,
-        {
-          headers: {
-            'Authorization': `Bearer ${process.env.GITHUB_TOKEN}`,
-            'Accept': 'application/vnd.github.v3+json',
-            'User-Agent': 'Manifest-Generator'
+    if (dispatchResponse.ok) {
+      if (dispatchResponse.status === 204) {
+        // Wait a moment for the workflow to be created
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        // Fetch the most recent workflow run
+        const runsResponse = await fetch(
+          `https://api.github.com/repos/${process.env.GITHUB_REPO}/actions/workflows/test-manifest.yml/runs?per_page=1`,
+          {
+            headers: {
+              'Authorization': `Bearer ${process.env.GITHUB_TOKEN}`,
+              'Accept': 'application/vnd.github.v3+json',
+              'User-Agent': 'Manifest-Generator'
+            }
+          }
+        );
+
+        if (runsResponse.ok) {
+          const runsData = await runsResponse.json();
+          
+          if (runsData.workflow_runs && runsData.workflow_runs.length > 0) {
+            const latestRun = runsData.workflow_runs[0];
+            
+            return res.status(200).json({ 
+              success: true, 
+              message: 'Test triggered successfully',
+              runId: latestRun.id,
+              runUrl: latestRun.html_url,
+              status: latestRun.status,
+              workflowUrl: `https://github.com/${process.env.GITHUB_REPO}/actions/workflows/test-manifest.yml`
+            });
           }
         }
-      );
-
-      if (runsResponse.ok) {
-        const runsData = await runsResponse.json();
         
-        if (runsData.workflow_runs && runsData.workflow_runs.length > 0) {
-          const latestRun = runsData.workflow_runs[0];
-          
-          return res.status(200).json({ 
-            success: true, 
-            message: 'Test triggered successfully',
-            runId: latestRun.id,
-            runUrl: latestRun.html_url,
-            status: latestRun.status,
-            workflowUrl: `https://github.com/${process.env.GITHUB_REPO}/actions/workflows/test-manifest.yml`
-          });
-        }
+        // Fallback if we can't get the run ID
+        return res.status(200).json({ 
+          success: true, 
+          message: 'Test triggered successfully',
+          workflowUrl: `https://github.com/${process.env.GITHUB_REPO}/actions/workflows/test-manifest.yml`
+        });
+      } else {
+        const workflowInfo = await dispatchResponse.json();
+        return res.status(200).json({ 
+          success: true, 
+          message: 'Test triggered successfully',
+          runId: workflowInfo.workflow_run_id,
+          runUrl: workflowInfo.html_url,
+          status: 'queued',
+          workflowUrl: `https://github.com/${process.env.GITHUB_REPO}/actions/workflows/test-manifest.yml`
+        });
       }
-      
-      // Fallback if we can't get the run ID
-      return res.status(200).json({ 
-        success: true, 
-        message: 'Test triggered successfully',
-        workflowUrl: `https://github.com/${process.env.GITHUB_REPO}/actions/workflows/test-manifest.yml`
-      });
     } else {
       const errorData = await dispatchResponse.text();
       console.error('GitHub API Error:', errorData);
